@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulseWire | Live News Dashboard</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --brand: #2563eb;
+            --accent: #f97316;
+            --border: #e2e8f0;
+            --shadow: 0 18px 60px rgba(15, 23, 42, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            min-height: 100vh;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        aside {
+            background: linear-gradient(180deg, #0f172a, #1e293b);
+            color: #fff;
+            padding: 32px 24px;
+        }
+
+        .brand {
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+        }
+
+        .brand span {
+            color: var(--accent);
+        }
+
+        .sidebar-section {
+            margin-bottom: 28px;
+        }
+
+        .sidebar-section h4 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .category-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .category-list a {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .category-list a:hover,
+        .category-list a.active {
+            background: rgba(255, 255, 255, 0.18);
+            transform: translateX(4px);
+        }
+
+        .country-select {
+            display: grid;
+            gap: 8px;
+        }
+
+        .country-select a {
+            padding: 8px 12px;
+            border-radius: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            font-size: 0.9rem;
+        }
+
+        .country-select a.active {
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        main {
+            padding: 40px 50px 60px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .header-text h1 {
+            font-size: 2.5rem;
+            margin-bottom: 6px;
+        }
+
+        .header-text p {
+            color: var(--muted);
+        }
+
+        .search-bar {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 14px 18px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            box-shadow: 0 12px 25px rgba(15, 23, 42, 0.06);
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            width: 240px;
+            outline: none;
+        }
+
+        .search-bar button {
+            border: none;
+            background: var(--brand);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border-radius: 18px;
+            padding: 18px 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
+        }
+
+        .stat-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+
+        .stat-card span {
+            color: var(--muted);
+        }
+
+        .hero {
+            background: var(--card);
+            border-radius: 28px;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+
+        .hero-content h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .hero-content p {
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 16px;
+        }
+
+        .hero-content a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .news-card {
+            background: var(--card);
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .news-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+
+        .news-card .content {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            height: 100%;
+        }
+
+        .news-card h3 {
+            font-size: 1.1rem;
+        }
+
+        .news-card p {
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .news-card a {
+            margin-top: auto;
+            text-decoration: none;
+            color: var(--brand);
+            font-weight: 600;
+        }
+
+        .latest {
+            margin-top: 32px;
+        }
+
+        .latest h2 {
+            margin-bottom: 16px;
+        }
+
+        .latest-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .latest-item {
+            padding: 18px 20px;
+            background: var(--card);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            display: grid;
+            gap: 8px;
+        }
+
+        .latest-item a {
+            color: var(--ink);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .latest-item span {
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        .alert {
+            padding: 14px 18px;
+            border-radius: 12px;
+            background: #fff7ed;
+            color: #9a3412;
+            border: 1px solid #fed7aa;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            aside {
+                display: none;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <aside>
+        <div class="brand">Pulse<span>Wire</span></div>
+        <div class="sidebar-section">
+            <h4>Categories</h4>
+            <div class="category-list">
+                {% for category in categories %}
+                    <a href="/?category={{ category.slug }}&country={{ active_country }}" class="{% if category.slug == active_category %}active{% endif %}">
+                        <span>{{ category.icon }} {{ category.label }}</span>
+                        <span>→</span>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="sidebar-section">
+            <h4>Regions</h4>
+            <div class="country-select">
+                {% for code, label in countries.items %}
+                    <a href="/?category={{ active_category }}&country={{ code }}" class="{% if code == active_country %}active{% endif %}">{{ label }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="sidebar-section">
+            <h4>Quick Tips</h4>
+            <p style="color: rgba(255,255,255,0.7); line-height: 1.5; font-size: 0.9rem;">
+                Track what matters most, search live headlines, and jump to your favorite regions.
+            </p>
+        </div>
+    </aside>
+    <main>
+        <header>
+            <div class="header-text">
+                <h1>Live News Intelligence</h1>
+                <p>Curated top stories for {{ active_country_label|default:"global readers" }}.</p>
+            </div>
+            <form class="search-bar" method="get">
+                <input type="hidden" name="category" value="{{ active_category }}">
+                <input type="hidden" name="country" value="{{ active_country }}">
+                <input type="text" name="q" placeholder="Search for a topic, brand, or keyword" value="{{ query }}">
+                <button type="submit">Search</button>
+            </form>
+        </header>
+
+        {% if error_message %}
+            <div class="alert">{{ error_message }}</div>
+        {% endif %}
+
+        <section class="stat-grid">
+            <div class="stat-card">
+                <h3>{{ total_results }}</h3>
+                <span>Stories loaded</span>
+            </div>
+            <div class="stat-card">
+                <h3>{{ categories|length }}</h3>
+                <span>Curated categories</span>
+            </div>
+            <div class="stat-card">
+                <h3>{{ active_category|capfirst }}</h3>
+                <span>Active desk</span>
+            </div>
+        </section>
+
+        {% if hero_story %}
+            <section class="hero">
+                <div class="hero-content">
+                    <div class="meta">
+                        <span>{{ hero_story.source }}</span>
+                        <span>{{ hero_story.author }}</span>
+                        {% if hero_story.published %}
+                            <span>{{ hero_story.published|date:"M d, Y" }}</span>
+                        {% endif %}
+                    </div>
+                    <h2>{{ hero_story.title }}</h2>
+                    <p>{{ hero_story.description }}</p>
+                    <a href="{{ hero_story.url }}" target="_blank" rel="noopener">Read full story →</a>
+                </div>
+                {% if hero_story.image %}
+                    <img src="{{ hero_story.image }}" alt="{{ hero_story.title }}">
+                {% else %}
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=900&q=80" alt="News collage">
+                {% endif %}
+            </section>
+        {% endif %}
+
+        <section class="grid">
+            {% for article in secondary_stories %}
+                <article class="news-card">
+                    {% if article.image %}
+                        <img src="{{ article.image }}" alt="{{ article.title }}">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=800&q=80" alt="Default story">
+                    {% endif %}
+                    <div class="content">
+                        <span class="meta">{{ article.source }}</span>
+                        <h3>{{ article.title }}</h3>
+                        <p>{{ article.description }}</p>
+                        <a href="{{ article.url }}" target="_blank" rel="noopener">Read more</a>
+                    </div>
+                </article>
+            {% empty %}
+                <p>No additional stories available.</p>
+            {% endfor %}
+        </section>
+
+        <section class="latest">
+            <h2>Latest Updates</h2>
+            <div class="latest-list">
+                {% for article in latest_stories %}
+                    <div class="latest-item">
+                        <a href="{{ article.url }}" target="_blank" rel="noopener">{{ article.title }}</a>
+                        <span>{{ article.source }} · {{ article.author }}{% if article.published %} · {{ article.published|date:"M d, Y" }}{% endif %}</span>
+                    </div>
+                {% empty %}
+                    <div class="latest-item">No additional updates yet.</div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>
