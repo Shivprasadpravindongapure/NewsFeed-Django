@@ -10,8 +10,18 @@
 ## Setup
 1. Create a NewsAPI key at https://newsapi.org and export it as an environment variable:
    ```bash
-   export NEWS_API_KEY=\"your_key_here\"
+   export NEWS_API_KEY="your_key_here"
    ```
-2. Start your Django server as usual and visit the home page.
+2. Install dependencies:
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
+   ```
+3. Run the Django server:
+   ```bash
+   python manage.py migrate
+   python manage.py runserver
+   ```
 
 > Tip: if `NEWS_API_KEY` is missing, the UI will still render and show a helpful message.
